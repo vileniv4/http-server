@@ -40,7 +40,13 @@ public class Server {
                         if (parts.length != 3) return;
 
                         String method = parts[0];   // GET
-                        String path = parts[1];     // /index.html
+                        String fullPath = parts[1];  // полный путь с параметрами
+
+                        // Извлекаем чистый путь для поиска хендлера
+                        String path = fullPath;
+                        if (fullPath.contains("?")) {
+                            path = fullPath.split("\\?", 2)[0];
+                        }
 
                         Handler handler = null;
                         Map<String, Handler> innerMap = handlers.get(method);
@@ -48,7 +54,7 @@ public class Server {
                             handler = innerMap.get(path);
                         }
 
-                        Request request = new Request(method, path, null, new HashMap<>());
+                        Request request = new Request(method, fullPath, null, new HashMap<>());
 
                         // 2. Читаем заголовки
                         String line;
